@@ -120,13 +120,13 @@ _Trả lời ở đây._
 
 | Loss | Độ chính xác held-out | Margin held-out | Độ dài trung bình | Nhận xét |
 |---|---:|---:|---:|---|
-| DPO | | | | |
-| RPO | | | | |
-| DPO-norm | | | | |
-| LD-DPO | | | | |
-| ORPO | | | | |
+| DPO | 73.0% | +0.025 | 362.4 | Baseline sigmoid, đạt accuracy cao nhất (73%), chẩn đoán INTENDED |
+| RPO | 65.0% | +0.035 | 360.4 | Thêm NLL chosen, kiểm soát độ dài chặt chẽ nhất (360.4 ký tự), INTENDED |
+| DPO-norm | 63.0% | +0.011 | 365.5 | Chuẩn hoá token length, bị Likelihood Displacement (cả 2 reward âm) |
+| LD-DPO | 57.0% | +0.024 | 363.4 | Giảm trọng số phần token vượt quá độ dài, Likelihood Displacement |
+| ORPO | 65.0% | N/A (log-odds -0.624) | 370.9 | Không cần mô hình reference, câu trả lời dài nhất (370.9 ký tự) |
 
-_Biến thể nào thay đổi độ dài nhiều nhất, và vì sao (dựa vào công thức loss)?_
+_Biến thể thay đổi độ dài nhiều nhất là **ORPO** (độ dài trung bình đạt 370.9 ký tự). Nguyên nhân xuất phát từ công thức hàm mất mát của ORPO: $\mathcal{L}_{\text{ORPO}} = \mathcal{L}_{\text{SFT}} + \lambda \mathcal{L}_{\text{odds}}$. ORPO không sử dụng mô hình tham chiếu (reference-free) mà gộp trực tiếp bước học lệnh và học sở thích; việc thiếu chiếc mỏ neo KL-divergence cố định của mô hình tham chiếu khiến mô hình có xu hướng sinh nhiều token hơn để tối ưu hóa tỷ lệ log-odds. Ngược lại, **RPO** cho độ dài ngắn nhất và chặt chẽ nhất (360.4 ký tự) nhờ có thành phần phạt NLL trực tiếp trên câu chosen._
 
 ---
 
@@ -143,7 +143,7 @@ _Thành phần reward nào tăng trước (đúng định dạng hay đúng đá
 
 ## Danh sách bonus
 
-- [ ] NB3b — biến thể loss (+8)
+- [x] NB3b — biến thể loss (+8)
 - [ ] NB5 — GGUF SFT+DPO (+4)
 - [ ] NB6 — benchmark (+6)
 - [ ] NB7 — GRPO (+8)
